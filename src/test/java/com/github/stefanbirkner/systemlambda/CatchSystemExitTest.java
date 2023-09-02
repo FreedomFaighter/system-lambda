@@ -28,7 +28,6 @@ import java.net.UnknownHostException;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -246,24 +245,6 @@ class CatchSystemExitTest {
 			= new SecurityManagerMock();
 
 		@Test
-		void getInCheck_is_delegated_to_original_security_manager(
-		) throws Exception {
-			originalSecurityManager.inCheck = true;
-			AtomicBoolean inCheck = new AtomicBoolean();
-			withSecurityManager(
-				originalSecurityManager,
-				() -> catchSystemExit(
-					() -> {
-						inCheck.set(getSecurityManager().getInCheck());
-						//ensure that catchSystemExit does not fail
-						exit(ARBITRARY_STATUS);
-					}
-				)
-			);
-			assertThat(inCheck).isTrue();
-		}
-
-		@Test
 		void security_context_of_original_security_manager_is_provided(
 		) throws Exception {
 			Object context = new Object();
@@ -282,29 +263,6 @@ class CatchSystemExitTest {
 				)
 			);
 			assertThat(contextDuringExecution).hasValue(context);
-		}
-
-		@Test
-		void checkTopLevelWindow_is_delegated_to_original_security_manager(
-		) throws Exception {
-			originalSecurityManager.topLevelWindow = true;
-			Object window = new Object();
-			AtomicBoolean check = new AtomicBoolean();
-			withSecurityManager(
-				originalSecurityManager,
-				() -> catchSystemExit(
-					() -> {
-						check.set(
-							getSecurityManager().checkTopLevelWindow(window)
-						);
-						//ensure that catchSystemExit does not fail
-						exit(ARBITRARY_STATUS);
-					}
-				)
-			);
-			assertThat(check).isTrue();
-			assertThat(originalSecurityManager.windowOfCheckTopLevelWindowCall)
-				.isSameAs(window);
 		}
 
 		@Test

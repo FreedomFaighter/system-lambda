@@ -1160,7 +1160,7 @@ public class SystemLambda {
 		) {
     		validateNotSet(name, value);
 			HashMap<String, String> moreVariables = new HashMap<>(variables);
-			moreVariables.put(name, value);
+			moreVariables.putAll(singletonMap(name, value));
 			return new WithEnvironmentVariables(moreVariables);
 		}
 
@@ -1308,7 +1308,7 @@ public class SystemLambda {
 			if (value == null)
 				variables.remove(name);
 			else
-				variables.put(name, value);
+				variables.putIfAbsent(name, value);
 		}
 
 		void restoreOriginalVariables(
@@ -1430,12 +1430,6 @@ public class SystemLambda {
 				throw new IllegalStateException(
 					"checkExit(int) has not been called.");
 		}
-
-        @Override
-        public boolean getInCheck() {
-            return (originalSecurityManager != null)
-                && originalSecurityManager.getInCheck();
-        }
 
         @Override
         public Object getSecurityContext() {
@@ -1615,29 +1609,9 @@ public class SystemLambda {
         }
 
         @Override
-        public boolean checkTopLevelWindow(
-        	Object window
-		) {
-            return (originalSecurityManager == null) ? super.checkTopLevelWindow(window)
-                : originalSecurityManager.checkTopLevelWindow(window);
-        }
-
-        @Override
         public void checkPrintJobAccess() {
             if (originalSecurityManager != null)
                 originalSecurityManager.checkPrintJobAccess();
-        }
-
-        @Override
-        public void checkSystemClipboardAccess() {
-            if (originalSecurityManager != null)
-                originalSecurityManager.checkSystemClipboardAccess();
-        }
-
-        @Override
-        public void checkAwtEventQueueAccess() {
-            if (originalSecurityManager != null)
-                originalSecurityManager.checkAwtEventQueueAccess();
         }
 
         @Override
@@ -1660,15 +1634,6 @@ public class SystemLambda {
         public void checkSetFactory() {
             if (originalSecurityManager != null)
                 originalSecurityManager.checkSetFactory();
-        }
-
-        @Override
-        public void checkMemberAccess(
-        	Class<?> clazz,
-			int which
-		) {
-            if (originalSecurityManager != null)
-                originalSecurityManager.checkMemberAccess(clazz, which);
         }
 
         @Override
