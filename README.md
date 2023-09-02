@@ -1,3 +1,5 @@
+[![CI with different Java versions](https://github.com/FreedomFaighter/system-lambda/actions/workflows/ci.yml/badge.svg?branch=WithEnvironmentVariables_and_multiple_java_version_ci_script)](https://github.com/FreedomFaighter/system-lambda/actions/workflows/ci.yml)
+
 # System Lambda
 
 ![Build Status Linux](https://github.com/stefanbirkner/system-lambda/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master) [![Build Status Windows](https://ci.appveyor.com/api/projects/status/4ck6g0triwhvk9dy?svg=true)](https://ci.appveyor.com/project/stefanbirkner/system-lambda)
