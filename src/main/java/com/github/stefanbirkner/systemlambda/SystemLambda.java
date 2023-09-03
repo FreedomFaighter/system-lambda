@@ -1160,7 +1160,7 @@ public class SystemLambda {
 		) {
     		validateNotSet(name, value);
 			HashMap<String, String> moreVariables = new HashMap<>(variables);
-			moreVariables.putAll(singletonMap(name, value));
+			moreVariables.putIfAbsent(name, value);
 			return new WithEnvironmentVariables(moreVariables);
 		}
 
