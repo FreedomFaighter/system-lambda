@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
         java: ['8', '11', '17']
-    name: Java ${{ matrix.java }} System-Lambda
+    name: Java ${{ matrix.java }} on ${{ matrix.os}} System-Lambda
     steps:
     - name: Checkout
       uses: actions/checkout@v2
