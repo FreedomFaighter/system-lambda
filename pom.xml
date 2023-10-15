@@ -32,8 +32,8 @@
 
   <properties>
     <findbugs.excludeFilterFile>findbugs-exclude.xml</findbugs.excludeFilterFile>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.source>${java_version}</maven.compiler.source>
+    <maven.compiler.target>${java_version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
