@@ -1,6 +1,10 @@
 name: CI with different Java versions
 
-on: [push, pull_request]
+on: 
+  push:
+  pull_request: 
+    branches:
+      - master
 
 jobs:
   build:
@@ -19,6 +23,6 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: mvn -B compile --file pom.xml
+      run: mvn -B compile --file pom.xml -Djava_version=${{ matrix.java }}
     - name: Test with Maven
-      run: mvn -B test --file pom.xml
+      run: mvn -B test --file pom.xml -Djava_version=${{ matrix.java }}
