@@ -11,8 +11,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['windows-latest', 'windows-2019', 'ubuntu-latest', 'macos-latest']
-        java: ['11', '16', '17']
+        os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
+        java: ['11', '17']
+        javaDistribution: [ 'temurin', 'corretto' ]
     name: Java ${{ matrix.java }} on ${{ matrix.os}} System-Lambda
     steps:
     - name: Checkout
@@ -20,7 +21,7 @@ jobs:
     - name: Setup java
       uses: actions/setup-java@v3
       with: 
-        distribution: 'corretto'
+        distribution: ${{ matrix.javaDistribution }}
         java-version: ${{ matrix.java }}
     - name: Build with Maven
       run: mvn -B compile --file pom.xml -Djava_version=${{ matrix.java }}
