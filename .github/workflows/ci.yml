@@ -1,4 +1,4 @@
-name: CI with different Java versions
+name: System-Lambda build
 
 on: 
   push:
@@ -14,7 +14,7 @@ jobs:
         os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
         java: ['11', '17']
         javaDistribution: [ 'temurin', 'corretto' ]
-    name: Java ${{ matrix.java }} on ${{ matrix.os}} System-Lambda
+    name: ${{ matrix.javaDistribution }} ${{ matrix.java }} on ${{ matrix.os}} System-Lambda
     steps:
     - name: Checkout
       uses: actions/checkout@v2
