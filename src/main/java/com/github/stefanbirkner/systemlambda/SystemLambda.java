@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.security.Permission;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.lang.reflect.Method;
 
 import static java.lang.Class.forName;
 import static java.lang.System.*;
@@ -1401,6 +1402,25 @@ public class SystemLambda {
 	 * calls are delegated to the original security manager.
      */
     private static class NoExitSecurityManager extends SecurityManager {
+		private static Method getSystemSecurityMethod(
+			String methodName
+		) throws UnsupportedOperationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException
+		{
+			Method m;
+			try{
+				m = super.getClass().getDeclaredMethod(methodName);
+			}
+			catch(NoSuchMethodException nsme)
+			{
+				throw nsme;
+			}
+			if(m == null)
+			{
+				throw new UnsupportedOperationException(methodName + " method returned as null value after attempt to get Method from reflection.");
+			}
+			return m;
+		}
+
         private final SecurityManager originalSecurityManager;
 		private Integer statusOfFirstExitCall = null;
 
@@ -1431,10 +1451,40 @@ public class SystemLambda {
 					"checkExit(int) has not been called.");
 		}
 
+        public boolean getInCheck() throws UnsupportedOperationException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException {
+			Method m;
+			try {
+				m = NoExitSecurityManager.getSystemSecurityMethod("getInCheck");
+			}
+			catch(NoSuchMethodException nsme)
+			{
+				throw nsme;
+			}
+			catch(IllegalAccessException iae)
+			{
+				throw iae;
+			}
+			catch(Exception ex)
+			{
+				throw ex;
+			}
+			return (originalSecurityManager != null) && (boolean)m.invoke(originalSecurityManager);
+        }
+
         @Override
         public Object getSecurityContext() {
             return (originalSecurityManager == null) ? super.getSecurityContext()
                 : originalSecurityManager.getSecurityContext();
+        }
+
+        public boolean checkTopLevelWindow (
+        	Object window
+		) throws NoSuchMethodException {
+			String methodName = "checkTopLevelWindow";
+			boolean result = (boolean)super.getClass().getMethod(methodName, window.getClass()).invoke(super, window);
+
+            if (originalSecurityManager == null)
+				return result;
         }
 
         @Override
@@ -1614,6 +1664,18 @@ public class SystemLambda {
                 originalSecurityManager.checkPrintJobAccess();
         }
 
+        public void checkSystemClipboardAccess() throws IllegalAccessException {
+			Method m = getSystemSecurityMethod("checkSystemClipboardAccess");
+            if (originalSecurityManager != null)
+                m.invoke(originalSecurityManager);
+        }
+
+        public void checkAwtEventQueueAccess() throws IllegalAccessException {
+			Method m = getSystemSecurityMethod("checkAwtEventQueueAccess");
+            if (originalSecurityManager != null)
+                m.invoke(originalSecurityManager);
+        }
+
         @Override
         public void checkPackageAccess(
         	String pkg
@@ -1622,7 +1684,15 @@ public class SystemLambda {
                 originalSecurityManager.checkPackageAccess(pkg);
         }
 
-        @Override
+        public void checkMemberAccess(
+        	Class<?> clazz,
+			int which
+		) throws IllegalAccessException {
+			Method m = getSystemSecurityMethod("checkMemberAccess");
+			if (originalSecurityManager != null)
+                m.invoke(originalSecurityManager, clazz, which);
+        }
+
         public void checkPackageDefinition(
         	String pkg
 		) {

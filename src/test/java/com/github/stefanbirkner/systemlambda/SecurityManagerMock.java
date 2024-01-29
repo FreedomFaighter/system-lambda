@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Class;
+import java.lang.reflect.Method;
 
 class SecurityManagerMock extends SecurityManager {
 	Object securityContext = new Object();
@@ -156,6 +158,21 @@ class SecurityManagerMock extends SecurityManager {
 	}
 
 	@Override
+	public void checkSystemClipboardAccess() {
+		String methodName = "checkSystemClipboardAccess";
+		Class cl = Class.forName("java.lang.System.SecurityManager");
+		Method m = cl.getMethod(methodName, SecurityManager.class);
+		logMethodCall(methodName);
+		m.invoke(super);
+	}
+
+	@Override
+	public void checkAwtEventQueueAccess() {
+		logMethodCall("checkAwtEventQueueAccess");
+		super.checkAwtEventQueueAccess();
+	}
+
+	@Override
 	public void checkPackageAccess(String s) {
 		logMethodCall("checkPackageAccess", String.class, s);
 		super.checkPackageAccess(s);
@@ -189,6 +206,15 @@ class SecurityManagerMock extends SecurityManager {
 	}
 
 	@Override
+	public void checkMemberAccess(Class<?> aClass, int i) {
+		logMethodCall(
+			"checkMemberAccess",
+			new Class[] { Class.class, int.class },
+			aClass, i);
+		super.checkMemberAccess(aClass, i);
+	}
+
+	@Override
 	public void checkSecurityAccess(String s) {
 		logMethodCall("checkSecurityAccess", String.class, s);
 		super.checkSecurityAccess(s);
@@ -201,9 +227,22 @@ class SecurityManagerMock extends SecurityManager {
 	}
 
 	@Override
+	public boolean getInCheck() {
+		logMethodCall("getInCheck");
+		return inCheck;
+	}
+
+	@Override
 	public ThreadGroup getThreadGroup() {
 		logMethodCall("getThreadGroup");
 		return threadGroup;
+	}
+
+	@Override
+	public boolean checkTopLevelWindow(Object window) {
+		logMethodCall("checkTopLevelWindow", Object.class, window);
+		windowOfCheckTopLevelWindowCall = window;
+		return topLevelWindow;
 	}
 
 	void logMethodCall(String name) {
